@@ -1,0 +1,247 @@
+<main class="content">
+  <header class="topbar">
+    <div>
+      <p class="eyebrow">Current folder</p>
+      <h1>{{ currentPath || 'Home' }}</h1>
+      <p class="meta">Page {{ page + 1 }} / {{ totalPages || 1 }}</p>
+    </div>
+
+    <label class="upload-btn">
+      <span>{{ isUploading ? 'Uploading...' : 'Upload photo' }}</span>
+      <input
+        type="file"
+        accept="image/*"
+        multiple
+        hidden
+        [disabled]="isUploading"
+        (change)="onFileSelected($event)">
+    </label>
+  </header>
+  <nav class="breadcrumbs">
+    <button (click)="goHome()">Home</button>
+
+    <span *ngFor="let crumb of breadcrumbs">
+    /
+    <button (click)="goToPath(crumb.path)">
+      {{ crumb.name }}
+    </button>
+  </span>
+  </nav>
+  <section class="status-panel" *ngIf="isUploading || successMessage || errorMessage">
+    <div class="upload-status" *ngIf="isUploading">
+      <div class="status-row">
+        <span>{{ uploadMessage }}</span>
+        <strong>{{ uploadProgress }}%</strong>
+      </div>
+
+      <div class="progress-track">
+        <div class="progress-fill" [style.width.%]="uploadProgress"></div>
+      </div>
+    </div>
+
+    <p class="success-message" *ngIf="successMessage">
+      {{ successMessage }}
+    </p>
+
+    <p class="error-message" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </p>
+  </section>
+  <section class="folder-create">
+    <input
+      type="text"
+      placeholder="New folder name"
+      [(ngModel)]="newDirectoryName"
+      (keyup.enter)="createDirectory()">
+
+    <button (click)="createDirectory()">
+      Create folder
+    </button>
+  </section>
+  <section class="toolbar">
+    <button (click)="previousPage()" [disabled]="page === 0">
+      Previous
+    </button>
+
+    <button (click)="nextPage()" [disabled]="page + 1 >= totalPages">
+      Next
+    </button>
+  </section>
+  <section class="folder-grid" *ngIf="directories.length > 0">
+
+    <article
+      class="folder-card"
+      *ngFor="let directory of directories">
+
+      <div
+        class="folder-main"
+        (click)="openDirectory(directory)">
+
+        📁
+
+        <span *ngIf="renameDirectoryPath !== directory.path">
+        {{ directory.name }}
+      </span>
+
+        <input
+          *ngIf="renameDirectoryPath === directory.path"
+          [(ngModel)]="renameDirectoryName"
+          (click)="$event.stopPropagation()"
+          (keyup.enter)="confirmRenameDirectory(directory)">
+      </div>
+
+      <div class="folder-actions">
+
+        <button
+          *ngIf="renameDirectoryPath !== directory.path"
+          (click)="$event.stopPropagation(); startRenameDirectory(directory)">
+          Rename
+        </button>
+        <a
+          class="folder-download-btn"
+          [href]="fileService.getDirectoryDownloadUrl(directory.path)"
+          [download]="directory.name + '.zip'"
+          (click)="$event.stopPropagation()">
+          Download ZIP
+        </a>
+        <button
+          *ngIf="renameDirectoryPath === directory.path"
+          (click)="$event.stopPropagation(); confirmRenameDirectory(directory)">
+          Save
+        </button>
+
+        <button
+          *ngIf="renameDirectoryPath === directory.path"
+          (click)="$event.stopPropagation(); cancelRenameDirectory()">
+          Cancel
+        </button>
+
+        <button
+          class="danger-btn"
+          (click)="$event.stopPropagation(); deleteDirectory(directory)">
+          Delete
+        </button>
+
+      </div>
+
+    </article>
+
+  </section>
+  <section class="grid" *ngIf="files.length > 0; else emptyState">
+    <article class="card" *ngFor="let file of files">
+      <img
+        [src]="fileService.getFileUrl(file.path)"
+        [alt]="file.name"
+        (click)="openPreview(file)">
+
+      <div class="card-footer">
+
+        <p
+          class="file-name"
+          *ngIf="renameFilePath !== file.path">
+          {{ file.name }}
+        </p>
+
+        <input
+          class="file-rename-input"
+          *ngIf="renameFilePath === file.path"
+          [(ngModel)]="renameFileName"
+          (click)="$event.stopPropagation()"
+          (keyup.enter)="confirmRenameFile(file)">
+
+        <div class="card-actions">
+
+          <a
+            class="download-btn"
+            [href]="fileService.getDownloadUrl(file.path)"
+            [download]="file.name">
+            Download
+          </a>
+
+          <button
+            *ngIf="renameFilePath !== file.path"
+            class="secondary-btn"
+            (click)="startRenameFile(file)">
+            Rename
+          </button>
+
+          <button
+            *ngIf="renameFilePath === file.path"
+            class="secondary-btn"
+            (click)="confirmRenameFile(file)">
+            Save
+          </button>
+
+          <button
+            *ngIf="renameFilePath === file.path"
+            class="secondary-btn"
+            (click)="cancelRenameFile()">
+            Cancel
+          </button>
+          <button
+            *ngIf="moveFilePath !== file.path"
+            class="secondary-btn"
+            (click)="startMoveFile(file)">
+            Move
+          </button>
+          <button
+            class="danger-btn"
+            (click)="deleteFile(file)">
+            Delete
+          </button>
+
+        </div>
+        <div
+          class="move-panel"
+          *ngIf="moveFilePath === file.path">
+
+          <select [(ngModel)]="moveTargetDirectory">
+
+            <option
+              *ngFor="let directory of allDirectories"
+              [value]="directory.path">
+
+              {{ directory.path }}
+
+            </option>
+
+          </select>
+
+          <div class="move-actions">
+
+            <button
+              class="secondary-btn"
+              (click)="confirmMoveFile(file)">
+              Confirm
+            </button>
+
+            <button
+              class="danger-btn"
+              (click)="cancelMoveFile()">
+              Cancel
+            </button>
+
+          </div>
+
+        </div>
+      </div>
+    </article>
+  </section>
+  <div class="preview-backdrop" *ngIf="previewFile" (click)="closePreview()">
+    <div class="preview-modal" (click)="$event.stopPropagation()">
+      <button class="preview-close" (click)="closePreview()">×</button>
+
+      <img
+        [src]="fileService.getFileUrl(previewFile.path)"
+        [alt]="previewFile.name">
+
+      <p>{{ previewFile.name }}</p>
+    </div>
+  </div>
+  <ng-template #emptyState>
+    <div class="empty">
+      <h2>No files yet</h2>
+      <p>Upload photos from your computer or phone browser.</p>
+    </div>
+  </ng-template>
+</main>
