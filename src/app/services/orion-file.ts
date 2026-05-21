@@ -14,11 +14,20 @@ export class OrionFileService {
 
   constructor(private http: HttpClient) {}
 
-  getFiles(directory: string, page = 0, size = 20): Observable<PageResponse<FileItem>> {
-    const params = new HttpParams()
+  getFiles(
+    directory: string,
+    page = 0,
+    size = 20,
+    printed: boolean | null = null
+  ): Observable<PageResponse<FileItem>> {
+    let params = new HttpParams()
       .set('directory', directory)
       .set('page', page)
       .set('size', size);
+
+    if (printed !== null) {
+      params = params.set('printed', printed);
+    }
 
     return this.http.get<PageResponse<FileItem>>(this.apiUrl, { params });
   }

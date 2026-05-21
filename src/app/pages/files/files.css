@@ -511,3 +511,26 @@
   border-radius: 12px;
   outline: none;
 }
+
+.filter-bar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.filter-bar button {
+  padding: 10px 14px;
+  color: #cfd5ff;
+  background: rgba(17, 20, 40, 0.76);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.filter-bar button:hover,
+.filter-bar button.active {
+  color: #ffffff;
+  background: rgba(98, 111, 216, 0.28);
+  border-color: rgba(98, 111, 216, 0.55);
+}

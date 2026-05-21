@@ -127,6 +127,25 @@
     </article>
 
   </section>
+  <section class="filter-bar">
+    <button
+      [class.active]="printedFilter === null"
+      (click)="setPrintedFilter(null)">
+      All
+    </button>
+
+    <button
+      [class.active]="printedFilter === true"
+      (click)="setPrintedFilter(true)">
+      Printed
+    </button>
+
+    <button
+      [class.active]="printedFilter === false"
+      (click)="setPrintedFilter(false)">
+      Not printed
+    </button>
+  </section>
   <section class="grid" *ngIf="files.length > 0; else emptyState">
     <article class="card" *ngFor="let file of files">
       <img

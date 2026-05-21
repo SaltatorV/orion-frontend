@@ -27,7 +27,7 @@ export class FilesComponent implements OnInit {
 
   moveFilePath = '';
   moveTargetDirectory = '';
-
+  printedFilter: boolean | null = null;
   allDirectories: DirectoryItem[] = [];
 
   page = 0;
@@ -92,7 +92,12 @@ export class FilesComponent implements OnInit {
     this.previewFile = null;
   }
   loadFiles(): void {
-    this.fileService.getFiles(this.currentPath, this.page, this.size).subscribe({
+    this.fileService.getFiles(
+      this.currentPath,
+      this.page,
+      this.size,
+      this.printedFilter
+    ).subscribe({
       next: response => {
         this.files = response.content;
         this.totalPages = response.totalPages;
@@ -100,7 +105,11 @@ export class FilesComponent implements OnInit {
       error: error => console.error(error)
     });
   }
-
+  setPrintedFilter(value: boolean | null): void {
+    this.printedFilter = value;
+    this.page = 0;
+    this.loadFiles();
+  }
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
 
