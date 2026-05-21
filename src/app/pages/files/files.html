@@ -177,7 +177,12 @@
             [download]="file.name">
             Download
           </a>
-
+          <button
+            class="printed-btn"
+            [class.active]="file.printed"
+            (click)="togglePrinted(file)">
+            PRINTED
+          </button>
           <button
             *ngIf="renameFilePath !== file.path"
             class="secondary-btn"

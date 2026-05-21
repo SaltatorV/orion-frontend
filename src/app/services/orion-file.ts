@@ -44,7 +44,12 @@ export class OrionFileService {
       observe: 'events'
     });
   }
-
+  updatePrinted(path: string, printed: boolean): Observable<void> {
+    return this.http.patch<void>('/api/files/printed', {
+      path,
+      printed
+    });
+  }
   delete(path: string): Observable<void> {
     const params = new HttpParams().set('path', path);
 

@@ -110,6 +110,14 @@ export class FilesComponent implements OnInit {
     this.page = 0;
     this.loadFiles();
   }
+  togglePrinted(file: FileItem): void {
+    this.fileService.updatePrinted(file.path, !file.printed).subscribe({
+      next: () => {
+        file.printed = !file.printed;
+      },
+      error: error => console.error(error)
+    });
+  }
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
 

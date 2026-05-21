@@ -534,3 +534,11 @@
   background: rgba(98, 111, 216, 0.28);
   border-color: rgba(98, 111, 216, 0.55);
 }
+
+.printed-btn {
+  background: linear-gradient(135deg, #666b71, #3b3d4c) !important;
+}
+
+.printed-btn.active {
+  background: linear-gradient(135deg, #17c87e, #0f885e) !important;
+}
