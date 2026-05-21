@@ -130,8 +130,9 @@
   <section class="grid" *ngIf="files.length > 0; else emptyState">
     <article class="card" *ngFor="let file of files">
       <img
-        [src]="fileService.getFileUrl(file.path)"
+        [src]="fileService.getThumbnailUrl(file.path)"
         [alt]="file.name"
+        loading="lazy"
         (click)="openPreview(file)">
 
       <div class="card-footer">

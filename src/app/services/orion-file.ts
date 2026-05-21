@@ -95,4 +95,8 @@ export class OrionFileService {
   getAllDirectories(): Observable<DirectoryItem[]> {
     return this.http.get<DirectoryItem[]>('/api/directories/all');
   }
+
+  getThumbnailUrl(path: string): string {
+    return `/api/files/thumbnail?path=${encodeURIComponent(path)}`;
+  }
 }
